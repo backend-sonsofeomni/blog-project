@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@Table(name = "Post")
+@Table(name = "post")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post {
 
@@ -44,19 +44,19 @@ public class Post {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Status status;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "category_id", nullable =true)
-//    private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable =true)
+    private Category category;
 
     @Builder
-    public Post(String title, String content, Visibility visibility /*, Category category*/ ) {
+    public Post(String title, String content, Visibility visibility, Category category ) {
         this.title = title;
         this.content = content;
         this.visibility = visibility;
-        //this.category = category;
+        this.category = category;
         this.viewedCnt = 0L;
-        this.status = status.ACTIVATED;
+        this.status = Status.ACTIVATED;
     }
 
     @PrePersist
@@ -84,11 +84,11 @@ public class Post {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void update(String title, String content, Visibility visibility /*, Category category*/){
+    public void update(String title, String content, Visibility visibility, Category category){
         this.title = title;
         this.content = content;
         this.visibility = visibility;
-        //this.category = category;
+        this.category = category;
     }
 
     public void increaseViewCount(){
@@ -106,4 +106,9 @@ public class Post {
     public boolean isActivated() {
         return this.status == Status.ACTIVATED;
     }
+
+    public boolean isPublic(){
+        return this.visibility == Visibility.PUBLIC;
+    }
+
 }
