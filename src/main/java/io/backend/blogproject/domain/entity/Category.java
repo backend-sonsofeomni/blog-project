@@ -1,4 +1,4 @@
-package io.backend.blogproject.domain;
+package io.backend.blogproject.domain.entity;
 
 import java.time.LocalDateTime;
 
