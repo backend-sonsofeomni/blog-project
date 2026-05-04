@@ -52,4 +52,26 @@ public class CommentRepository {
             throw new RuntimeException(ErrorCode.UNABLE_TO_FIND_COMMENT.message,e);
         }
     }
+
+    public void createComment(
+            Post post,
+            String content
+    ){
+        try(
+                EntityManager em = emf.createEntityManager()
+        ) {
+            EntityTransaction tx = em.getTransaction();
+            tx.begin();
+
+            Comment comment = Comment.createComment(
+                    post,
+                    content
+            );
+
+            em.persist(comment);
+            tx.commit();
+        } catch (Exception e){
+            throw new RuntimeException(ErrorCode.NO_POST.message);
+        }
+    }
 }
