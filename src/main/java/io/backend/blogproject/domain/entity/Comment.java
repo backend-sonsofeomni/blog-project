@@ -4,6 +4,7 @@ import io.backend.blogproject.constant.ErrorCode;
 import io.backend.blogproject.constant.Status;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
+@Getter
 @Table(name = "comment")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment {
@@ -34,7 +36,7 @@ public class Comment {
 
     @OneToOne
     @JoinColumn(name = "parent_id")
-    private Comment parentId;
+    private Comment parent_id;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
@@ -52,22 +54,42 @@ public class Comment {
     }
 
     private void setParentComment(Comment parentComment){
-        this.parentId = parentComment;
+        this.parent_id = parentComment;
+    }
+
+    private void setChildComment(Comment childComment){
+        this.child_id = childComment;
     }
 
     public static Comment createComment(
         Post post,
-        String content,
-        Comment parentComment
+        String content
     ){
-        if (post == null) throw new RuntimeException(ErrorCode.NO_POST.message);
-        if (Strings.isEmpty(content)) throw new RuntimeException(ErrorCode.NO_COMMENT.message);
+        validateCreation(post,content);
+
+        Comment comment = new Comment(post,content);
+
+        comment.setParentComment(null);
+
+        post.mappedByComment(comment);
+
+        return comment;
+    }
+
+    public static Comment replyComment(
+            Post post,
+            String content,
+            Comment parentComment
+    ){
+        validateCreation(post,content);
+        if(parentComment == null) throw new RuntimeException(ErrorCode.NO_PARENT_COMMENT.message);
 
         Comment comment = new Comment(post,content);
 
         post.mappedByComment(comment);
 
-        if(parentComment != null) comment.setParentComment(parentComment);
+        comment.setParentComment(parentComment);
+        parentComment.setChildComment(comment);
 
         return comment;
     }
@@ -77,6 +99,12 @@ public class Comment {
         this.status = Status.REMOVED;
     }
 
-
+    public static void validateCreation(
+            Post post,
+            String content
+    ){
+        if (post == null) throw new RuntimeException(ErrorCode.NO_POST.message);
+        if (Strings.isEmpty(content)) throw new RuntimeException(ErrorCode.NO_COMMENT.message);
+    }
 
 }
