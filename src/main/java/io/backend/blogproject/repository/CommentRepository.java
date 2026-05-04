@@ -74,7 +74,7 @@ public class CommentRepository {
             em.persist(comment);
             tx.commit();
         } catch (Exception e){
-            throw new RuntimeException(ErrorCode.NO_POST.message);
+            throw new RuntimeException(ErrorCode.NO_POST.message,e);
         }
     }
 
@@ -99,7 +99,7 @@ public class CommentRepository {
             tx.commit();
         } catch (Exception e){
             tx.rollback();
-            throw new RuntimeException(ErrorCode.CAN_NOT_CREATE_COMMENT.message);
+            throw new RuntimeException(ErrorCode.CAN_NOT_CREATE_COMMENT.message,e);
         } finally {
             em.close();
         }
@@ -116,7 +116,7 @@ public class CommentRepository {
             tx.commit();
         } catch (Exception e){
             tx.rollback();
-            throw new RuntimeException(ErrorCode.CAN_NOT_CREATE_COMMENT.message);
+            throw new RuntimeException(ErrorCode.CAN_NOT_CREATE_COMMENT.message,e);
         } finally {
             em.close();
         }
