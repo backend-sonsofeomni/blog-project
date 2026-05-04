@@ -24,6 +24,7 @@ public class CommentRepository {
                     SELECT c
                     FROM Comment c
                     WHERE c.post = :postId
+                    AND c.status != 'REMOVED'
                     """;
             return em.createQuery(JPQL_GET_COMMENTS, Comment.class)
                     .setParameter("postId", postId)
@@ -41,6 +42,7 @@ public class CommentRepository {
                     SELECT c
                     FROM Comment c
                     WHERE c.id = :commentId
+                    AND c.status != 'REMOVED'
                     """;
             Comment foundedComment = em.createQuery(JPQL_GET_COMMENTS, Comment.class)
                     .setParameter("commentId", commentId)
