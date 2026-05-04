@@ -31,12 +31,12 @@ public class Comment {
     @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt;
 
-    @OneToOne(mappedBy = "parent_id")
-    private Comment child_id;
+    @OneToOne(mappedBy = "parentId")
+    private Comment childId;
 
     @OneToOne
     @JoinColumn(name = "parent_id")
-    private Comment parent_id;
+    private Comment parentId;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
@@ -54,11 +54,11 @@ public class Comment {
     }
 
     private void setParentComment(Comment parentComment){
-        this.parent_id = parentComment;
+        this.parentId = parentComment;
     }
 
     private void setChildComment(Comment childComment){
-        this.child_id = childComment;
+        this.childId = childComment;
     }
 
     public static Comment createComment(

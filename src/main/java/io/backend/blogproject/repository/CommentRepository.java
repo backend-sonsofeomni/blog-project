@@ -112,6 +112,7 @@ public class CommentRepository {
         try {
             tx.begin();
             comment.delete();
+            em.merge(comment);
             tx.commit();
         } catch (Exception e){
             tx.rollback();
