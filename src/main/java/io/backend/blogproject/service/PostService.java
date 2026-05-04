@@ -26,11 +26,13 @@ public class PostService {
 
     @Transactional
     public Long createPost(PostCreateRequest request){
+        Category category = findCategoryOrNull(request.getCategoryId());
+
         Post post = Post.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
                 .visibility(request.getVisibility())
-                .category(null)
+                .category(category)
                 .build();
 
         Post savedPost = postRepository.save(post);
@@ -38,7 +40,7 @@ public class PostService {
         return savedPost.getPostId();
     }
 
-    public List<PostListResponse> getPosts(){
+    public List<PostListResponse> getPublicPosts(){
         List<Post> posts = postRepository.findAllByStatusAndVisibility(
                 Status.ACTIVATED,
                 Visibility.PUBLIC
@@ -52,7 +54,7 @@ public class PostService {
 
     @Transactional
     public PostDetailResponse getPost(Long postId){
-        Post post = postRepository.findByPostIdAndStatus(postId, Status.ACTIVATED)
+        Post post = postRepository.findByPostIdAndStatusAndVisibility(postId, Status.ACTIVATED, Visibility.PUBLIC)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id="+postId));
         post.increaseViewCount();
 
@@ -65,12 +67,7 @@ public class PostService {
                 .orElseThrow(()->new IllegalArgumentException("게시글을 찾을 수 없습니다. id="+postId));
 
 
-        Category category = null;
-
-        if(request.getCategoryId() != null){
-            category = categoryRepository.findById(request.getCategoryId())
-                    .orElseThrow(()->new IllegalArgumentException("카테고리를 찾을 수 없습니다. id=" + request.getCategoryId()));
-        }
+        Category category = findCategoryOrNull(request.getCategoryId());
 
 
         post.update(
@@ -79,5 +76,22 @@ public class PostService {
                 request.getVisibility(),
                 category
         );
+    }
+
+    @Transactional
+    public void deletePost(Long postId){
+        Post post = postRepository.findByPostIdAndStatus(postId, Status.ACTIVATED)
+                .orElseThrow(()-> new IllegalArgumentException("게시글을 찾을 수 없습니다. id="+postId));
+
+        post.remove();
+    }
+
+    private Category findCategoryOrNull(Long categoryId) {
+        if (categoryId == null) {
+            return null;
+        }
+
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다. id=" + categoryId));
     }
 }

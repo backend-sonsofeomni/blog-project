@@ -16,5 +16,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Optional<Post> findByPostIdAndStatus(Long postId, Status status);
 
+    Optional<Post> findByPostIdAndStatusAndVisibility(Long postId, Status status, Visibility visibility);
+
+
     List<Post> findAllByStatusAndVisibility(Status status, Visibility visibility);
+
+
 }
