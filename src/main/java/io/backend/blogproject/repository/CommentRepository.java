@@ -101,4 +101,20 @@ public class CommentRepository {
             em.close();
         }
     }
+
+    public void deleteComment(Comment comment){
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+            comment.delete();
+            tx.commit();
+        } catch (Exception e){
+            tx.rollback();
+            throw new RuntimeException(ErrorCode.CAN_NOT_CREATE_COMMENT.message);
+        } finally {
+            em.close();
+        }
+    }
 }
