@@ -1,4 +1,4 @@
-package io.backend.blogproject.dto.domain;
+package io.backend.blogproject.domain.entity;
 
 import io.backend.blogproject.constant.Status;
 import io.backend.blogproject.constant.Visibility;
