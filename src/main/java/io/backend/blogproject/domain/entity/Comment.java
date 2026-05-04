@@ -1,6 +1,6 @@
-package io.backend.blogproject.domain.dto;
+package io.backend.blogproject.domain.entity;
 
-import io.backend.blogproject.constant.CommentError;
+import io.backend.blogproject.constant.ErrorCode;
 import io.backend.blogproject.constant.CommentStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -16,11 +16,14 @@ import java.time.LocalDateTime;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long commentId;
+    @Column(name = "comment_id")
+    private Long id;
 
+    @Column(nullable = false)
     private String content;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private CommentStatus commentStatus;
 
     private LocalDateTime createdAt;
@@ -30,7 +33,7 @@ public class Comment {
 
     @OneToOne
     @JoinColumn(name = "parent_id", nullable = true)
-    private Comment parent_id;
+    private Comment parentId;
 
     private Comment(
             String content
@@ -41,19 +44,24 @@ public class Comment {
     }
 
     private void setComment(Comment parentComment){
-        this.parent_id = parentComment;
+        this.parentId = parentComment;
     }
 
     public static Comment createComment(
         String content,
         Comment parentComment
     ){
-        if (Strings.isEmpty(content)) throw new RuntimeException(CommentError.NO_COMMENT.message);
+        if (Strings.isEmpty(content)) throw new RuntimeException(ErrorCode.NO_COMMENT.message);
 
         Comment comment = new Comment(content);
 
         if(parentComment != null) comment.setComment(parentComment);
 
         return comment;
+    }
+
+    public void delete(){
+        if(this.commentStatus.equals(CommentStatus.REMOVED)) throw new RuntimeException(ErrorCode.ALEADY_DELETED.message);
+        this.commentStatus = CommentStatus.REMOVED;
     }
 }
