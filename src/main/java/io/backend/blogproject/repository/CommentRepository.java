@@ -1,6 +1,7 @@
 package io.backend.blogproject.repository;
 
 import io.backend.blogproject.constant.ErrorCode;
+import io.backend.blogproject.constant.Status;
 import io.backend.blogproject.domain.entity.Comment;
 import io.backend.blogproject.domain.entity.Post;
 import jakarta.persistence.EntityManager;
@@ -23,7 +24,7 @@ public class CommentRepository {
             String JPQL_GET_COMMENTS = """
                     SELECT c
                     FROM Comment c
-                    WHERE c.post = :postId
+                    WHERE c.post.id = :postId
                     AND c.status != 'REMOVED'
                     """;
             return em.createQuery(JPQL_GET_COMMENTS, Comment.class)
@@ -42,12 +43,12 @@ public class CommentRepository {
                     SELECT c
                     FROM Comment c
                     WHERE c.id = :commentId
-                    AND c.status != 'REMOVED'
                     """;
             Comment foundedComment = em.createQuery(JPQL_GET_COMMENTS, Comment.class)
                     .setParameter("commentId", commentId)
                     .getSingleResult();
 
+            if (foundedComment.getStatus().equals(Status.REMOVED)) throw new RuntimeException(ErrorCode.ALREADY_DELETED.message);
             if (foundedComment==null) throw new RuntimeException(ErrorCode.UNABLE_TO_FIND_COMMENT.message);
             return foundedComment;
         } catch(Exception e) {

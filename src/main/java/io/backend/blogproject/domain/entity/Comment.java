@@ -31,7 +31,7 @@ public class Comment {
     @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt;
 
-    @OneToOne(mappedBy = "parrent_id")
+    @OneToOne(mappedBy = "parent_id")
     private Comment child_id;
 
     @OneToOne
