@@ -97,6 +97,33 @@ public class PostRepository {
         }
     }
 
+    public Optional<Post> findByPostIdAndStatusAndVisibility(
+            Long postId,
+            Status status,
+            Visibility visibility
+    ) {
+        try (EntityManager em = emf.createEntityManager()) {
+            String jpql = """
+                SELECT p
+                FROM Post p
+                LEFT JOIN FETCH p.category
+                WHERE p.postId = :postId
+                AND p.status = :status
+                AND p.visibility = :visibility
+                """;
+
+            List<Post> result = em.createQuery(jpql, Post.class)
+                    .setParameter("postId", postId)
+                    .setParameter("status", status)
+                    .setParameter("visibility", visibility)
+                    .getResultList();
+
+            return result.stream().findFirst();
+        } catch (Exception e) {
+            throw new RuntimeException("게시글 조회에 실패했습니다.", e);
+        }
+    }
+
     public void update(Post post) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();

@@ -12,19 +12,16 @@ import io.backend.blogproject.repository.CategoryRepository;
 import io.backend.blogproject.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class PostService {
 
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
 
-    @Transactional
     public Long createPost(PostCreateRequest request){
         Category category = findCategoryOrNull(request.getCategoryId());
 
@@ -52,16 +49,15 @@ public class PostService {
                 .toList();
     }
 
-    @Transactional
     public PostDetailResponse getPost(Long postId){
         Post post = postRepository.findByPostIdAndStatusAndVisibility(postId, Status.ACTIVATED, Visibility.PUBLIC)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id="+postId));
         post.increaseViewCount();
+        postRepository.update(post);
 
         return PostDetailResponse.from(post);
     }
 
-    @Transactional
     public void updatePost(Long postId, PostUpdateRequest request){
         Post post = postRepository.findByPostIdAndStatus(postId, Status.ACTIVATED)
                 .orElseThrow(()->new IllegalArgumentException("게시글을 찾을 수 없습니다. id="+postId));
@@ -76,14 +72,15 @@ public class PostService {
                 request.getVisibility(),
                 category
         );
+        postRepository.update(post);
     }
 
-    @Transactional
     public void deletePost(Long postId){
         Post post = postRepository.findByPostIdAndStatus(postId, Status.ACTIVATED)
                 .orElseThrow(()-> new IllegalArgumentException("게시글을 찾을 수 없습니다. id="+postId));
 
         post.remove();
+        postRepository.update(post);
     }
 
     private Category findCategoryOrNull(Long categoryId) {
@@ -93,5 +90,7 @@ public class PostService {
 
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다. id=" + categoryId));
+
+        //return null;
     }
 }
