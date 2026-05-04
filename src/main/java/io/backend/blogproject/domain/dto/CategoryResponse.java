@@ -1,27 +1,22 @@
 package io.backend.blogproject.domain.dto;
 
+import io.backend.blogproject.domain.entity.Category;
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 
+@Getter
 public class CategoryResponse {
 
-    private Long categoryId;
-    private String title;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private final Long id;
+    private final String title;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime updatedAt;
 
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public CategoryResponse(Category category) {
+        this.id = category.getId();
+        this.title = category.getTitle();
+        this.createdAt = category.getCreatedAt();
+        this.updatedAt = category.getUpdatedAt();
     }
 }

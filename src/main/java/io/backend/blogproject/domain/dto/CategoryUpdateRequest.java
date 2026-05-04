@@ -1,16 +1,15 @@
 package io.backend.blogproject.domain.dto;
 
-public class CategoryUpdateRequest {
-    private String title;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-    public CategoryUpdateRequest() {
-    }
+@Getter
+@NoArgsConstructor
+public class CategoryUpdateRequest {
+
+    private String title;
 
     public CategoryUpdateRequest(String title) {
         this.title = title;
-    }
-
-    public String getTitle() {
-        return title;
     }
 }
