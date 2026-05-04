@@ -107,4 +107,6 @@ public class Post {
     public boolean isActivated() {
         return this.status == Status.ACTIVATED;
     }
+
+    public boolean isVisible() { return this.visibility == Visibility.PUBLIC;}
 }

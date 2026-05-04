@@ -16,7 +16,7 @@ public class PostController {
     private final List<Post> posts = new ArrayList<>();
     Long sequence = 1L;
     public PostController(){
-        posts.add(new Post(sequence++, "첫 번째 게시글", "첫 번째 게시글 내용입니다.", Visibility.PUBLIC));
+        posts.add(new Post(sequence++, "첫 번째 게시글", "첫 번째 게시글 내용입니다.", Visibility.PRIVATE));
         posts.add(new Post(sequence++, "두 번째 게시글", "두 번째 게시글 내용입니다.", Visibility.PUBLIC));
         posts.add(new Post(sequence++, "세 번째 게시글", "세 번째 게시글 내용입니다.", Visibility.PUBLIC));
 
@@ -24,7 +24,14 @@ public class PostController {
 
     @GetMapping("posts")
     public String list(Model model){
-        model.addAttribute("posts", posts);
+        List<Post> actiavtedPosts = new ArrayList<>();
+
+        for(Post post: posts){
+            if(post.isVisible()){
+                actiavtedPosts.add(post);
+            }
+        }
+        model.addAttribute("posts", actiavtedPosts);
 
         return "posts";
     }
@@ -34,7 +41,7 @@ public class PostController {
         Post foundPost = null;
 
         for (Post post : posts) {
-            if (post.getPostId().equals(id)) {
+            if (post.getPostId().equals(id) && post.isActivated()) {
                 foundPost = post;
                 break;
             }
@@ -43,6 +50,8 @@ public class PostController {
         if (foundPost == null) {
             throw new IllegalArgumentException("게시글을 찾을 수 없습니다. id=" + id);
         }
+
+        foundPost.increaseViewCount();
 
         model.addAttribute("post", foundPost);
 

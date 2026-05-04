@@ -14,6 +14,8 @@
         <th>번호</th>
         <th>제목</th>
         <th>내용</th>
+        <th>조회수</th>
+
     </tr>
     </thead>
 
@@ -27,6 +29,7 @@
             </a>
         </td>
         <td th:text="${post.getContent()}">내용</td>
+        <td th:text="${post.getViewedCnt()}">0</td>
     </tr>
     </tbody>
 </table>
