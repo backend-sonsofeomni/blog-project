@@ -32,4 +32,24 @@ public class CommentRepository {
             throw new RuntimeException(ErrorCode.UNABLE_TO_FIND_COMMENT.message,e);
         }
     }
+
+    public Comment findCommentByCommentId(Long commentId){
+        try(
+                EntityManager em = emf.createEntityManager()
+        ) {
+            String JPQL_GET_COMMENTS = """
+                    SELECT c
+                    FROM Comment c
+                    WHERE c.id = :commentId
+                    """;
+            Comment foundedComment = em.createQuery(JPQL_GET_COMMENTS, Comment.class)
+                    .setParameter("commentId", commentId)
+                    .getSingleResult();
+
+            if (foundedComment==null) throw new RuntimeException(ErrorCode.UNABLE_TO_FIND_COMMENT.message);
+            return foundedComment;
+        } catch(Exception e) {
+            throw new RuntimeException(ErrorCode.UNABLE_TO_FIND_COMMENT.message,e);
+        }
+    }
 }
