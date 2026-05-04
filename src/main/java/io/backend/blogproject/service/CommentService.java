@@ -20,6 +20,11 @@ public class CommentService {
         return commentRepository.findCommentsByPostId(postId);
     }
 
+
+    public Comment getCommentById(Long commentId){
+        return commentRepository.findCommentByCommentId(commentId);
+    }
+
 }
 
 
