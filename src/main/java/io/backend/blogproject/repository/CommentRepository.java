@@ -74,4 +74,31 @@ public class CommentRepository {
             throw new RuntimeException(ErrorCode.NO_POST.message);
         }
     }
+
+    public void replyComment(
+            Post post,
+            Comment parentComment,
+            String content
+    ){
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+
+            Comment comment = Comment.replyComment(
+                    post,
+                    content,
+                    parentComment
+            );
+
+            em.persist(comment);
+            tx.commit();
+        } catch (Exception e){
+            tx.rollback();
+            throw new RuntimeException(ErrorCode.CAN_NOT_CREATE_COMMENT.message);
+        } finally {
+            em.close();
+        }
+    }
 }
