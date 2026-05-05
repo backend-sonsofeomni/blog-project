@@ -47,6 +47,11 @@ public class PostController {
     @PostMapping("/posts")
     public String createPost(PostCreateRequest request){
         Long postId = postService.createPost(request);
+
+        if(request.getVisibility() == Visibility.PRIVATE){
+            return "redirect:/posts";
+        }
+
         return "redirect:/posts/" + postId;
     }
 
