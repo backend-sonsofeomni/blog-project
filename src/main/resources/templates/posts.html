@@ -13,23 +13,24 @@
     <tr>
         <th>번호</th>
         <th>제목</th>
-        <th>내용</th>
         <th>조회수</th>
-
+        <th>공개 여부</th>
+        <th>작성일</th>
     </tr>
     </thead>
 
     <tbody>
     <tr th:each="post : ${posts}">
-        <td th:text="${post.getPostId()}">1</td>
+        <td th:text="${post.postId}">1</td>
         <td>
-            <a th:href="@{/posts/{id}(id=${post.getPostId()})}"
-               th:text="${post.getTitle()}">
+            <a th:href="@{/posts/{postId}(postId=${post.postId})}"
+               th:text="${post.title}">
                 제목
             </a>
         </td>
-        <td th:text="${post.getContent()}">내용</td>
-        <td th:text="${post.getViewedCnt()}">0</td>
+        <td th:text="${post.viewedCnt}">0</td>
+        <td th:text="${post.visibility}">PUBLIC</td>
+        <td th:text="${post.createdAt}">작성일</td>
     </tr>
     </tbody>
 </table>
