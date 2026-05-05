@@ -34,7 +34,7 @@ public class EntityManagerFactoryConfiguration {
 			.managedClass(Post.class)
 			.managedClass(Category.class)
 
-			.property("hibernate.hbm2ddl.auto", "create-drop");
+			.property("hibernate.hbm2ddl.auto", "update");
 
 		return hpc.createEntityManagerFactory();
 	}

@@ -1,6 +1,7 @@
 package io.backend.blogproject.controller;
 
 import io.backend.blogproject.constant.Visibility;
+import io.backend.blogproject.domain.dto.PostCreateRequest;
 import io.backend.blogproject.domain.entity.Post;
 import io.backend.blogproject.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,17 @@ public class PostController {
         model.addAttribute("post", postService.getPost(postId));
 
         return "post_detail";
+    }
+
+    @GetMapping("posts/new")
+    public String createForm(){
+        return "post_form";
+    }
+
+    @PostMapping("/posts")
+    public String createPost(PostCreateRequest request){
+        Long postId = postService.createPost(request);
+        return "redirect:/posts/" + postId;
     }
 
 
