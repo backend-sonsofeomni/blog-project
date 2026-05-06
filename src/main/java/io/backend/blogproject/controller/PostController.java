@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class PostController {
 
     private final PostService postService;
+    private final CategoryService categoryService;
 
     // 조회
     @GetMapping("/posts")
@@ -64,8 +65,9 @@ public class PostController {
     }
 
     // 생성
-    @GetMapping("posts/new")
-    public String createForm(){
+    @GetMapping("/posts/new")
+    public String createForm(Model model){
+        model.addAttribute("categories", categoryService.getCategories());
         return "post_form";
     }
 
