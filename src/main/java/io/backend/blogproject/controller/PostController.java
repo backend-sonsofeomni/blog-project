@@ -6,6 +6,9 @@ import io.backend.blogproject.domain.dto.PostPageResponse;
 import io.backend.blogproject.domain.dto.PostUpdateRequest;
 import io.backend.blogproject.domain.entity.Post;
 import io.backend.blogproject.service.PostService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,9 +42,28 @@ public class PostController {
 
     //단건조회
     @GetMapping("/posts/{postId}")
-    public String detail(@PathVariable Long postId, Model model){
+    public String detail(
+            @PathVariable Long postId,
+            Model model,
+            HttpServletRequest request,
+            HttpServletResponse response){
 
-        model.addAttribute("post", postService.getPost(postId));
+        String cookieName = "viewed_post_" + postId;
+
+        boolean alreadyViewed = hasCookie(request, cookieName);
+
+        if(alreadyViewed){
+            model.addAttribute("post",postService.getPostWithoutViewCount(postId));
+        }else{
+            model.addAttribute("post", postService.getPost(postId));
+
+            Cookie cookie = new Cookie(cookieName, "true");
+            cookie.setMaxAge(60*5); // 5분
+            cookie.setPath("/posts/"+postId);
+            cookie.setHttpOnly(true);
+
+            response.addCookie(cookie);
+        }
 
         return "post_detail";
     }
@@ -89,4 +111,21 @@ public class PostController {
         return "redirect:/posts";
     }
 
+
+    // 쿠키확인 메서드
+    private boolean hasCookie(HttpServletRequest request, String cookieName) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies == null) {
+            return false;
+        }
+
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(cookieName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

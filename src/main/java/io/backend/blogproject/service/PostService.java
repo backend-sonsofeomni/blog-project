@@ -73,6 +73,13 @@ public class PostService {
         );
     }
 
+    public PostDetailResponse getPostWithoutViewCount(Long postId){
+        Post post = postRepository.findByPostIdAndStatusAndVisibility(postId, Status.ACTIVATED, Visibility.PUBLIC)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id="+postId));
+
+        return PostDetailResponse.from(post);
+    }
+
     public PostDetailResponse getPost(Long postId){
         Post post = postRepository.findByPostIdAndStatusAndVisibility(postId, Status.ACTIVATED, Visibility.PUBLIC)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id="+postId));
