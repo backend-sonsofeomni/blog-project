@@ -34,16 +34,51 @@ public class PostService {
         return savedPost.getPostId();
     }
 
-    public List<PostResponse.PostList> getPublicPosts(){
+    public PostResponse.PostPage getPublicPosts(int page){
+        int offsetPage = page - 1;
+        int size = 10;
+
+        if(offsetPage < 0){
+            offsetPage = 0;
+        }
+
+
         List<Post> posts = postRepository.findAllByStatusAndVisibility(
+                Status.ACTIVATED,
+                Visibility.PUBLIC,
+                offsetPage,
+                size
+        );
+
+        long totalElements = postRepository.countByStatusAndVisibility(
                 Status.ACTIVATED,
                 Visibility.PUBLIC
         );
 
+        int totalPages = (int)Math.ceil((double) totalElements / size);
 
-        return posts.stream()
+
+        List<PostResponse.PostList> postResponses = posts.stream()
                 .map(PostResponse.PostList::from)
                 .toList();
+
+
+
+        return new PostResponse.PostPage(
+                postResponses,
+                page,
+                totalPages,
+                totalElements,
+                page>1,
+                page<totalPages
+        );
+    }
+
+    public PostResponse.PostDetail getPostWithoutViewCount(Long postId){
+        Post post = postRepository.findByPostIdAndStatusAndVisibility(postId, Status.ACTIVATED, Visibility.PUBLIC)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id="+postId));
+
+        return PostResponse.PostDetail.from(post);
     }
 
     public PostResponse.PostDetail getPost(Long postId){

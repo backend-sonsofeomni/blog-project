@@ -1,9 +1,9 @@
 package io.backend.blogproject.domain.dto;
-
 import io.backend.blogproject.constant.Visibility;
 import io.backend.blogproject.domain.entity.Post;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class PostResponse {
     public record PostDetail(
@@ -59,4 +59,12 @@ public class PostResponse {
         }
     }
 
+    public record PostPage(
+            List<PostList> posts,
+            int currentPage,
+            int totalPages,
+            long totalElements,
+            boolean hasPrevious,
+            boolean hasNext
+    ){}
 }
