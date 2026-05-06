@@ -4,23 +4,22 @@ import io.backend.blogproject.domain.dto.CategoryRequest;
 import io.backend.blogproject.domain.entity.Category;
 import io.backend.blogproject.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 public class CategoryService {
 
-    private static CategoryRepository categoryRepository = null;
+    private final CategoryRepository categoryRepository;
 
     public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 
-    public static List<Category> getCategories() {
+    public List<Category> getCategories() {
         return categoryRepository.findAllActivated();
     }
 
-    public void createCategory(CategoryRequest.Create request) {
+       public void createCategory(CategoryRequest.Create request) {
         if (request.title() == null || request.title().isBlank()) {
             throw new IllegalArgumentException("카테고리 이름을 작성해주세용.");
         }
@@ -38,7 +37,7 @@ public class CategoryService {
         categoryRepository.update(category);
     }
 
-    
+
     public void deleteCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));

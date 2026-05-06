@@ -87,6 +87,7 @@ public class PostController {
     @GetMapping("/posts/{postId}/edit")
     public String updateForm(@PathVariable Long postId, Model model) {
         model.addAttribute("post", postService.getPostForEdit(postId));
+        model.addAttribute("categories", categoryService.getCategories());
         return "post_edit";
     }
 
