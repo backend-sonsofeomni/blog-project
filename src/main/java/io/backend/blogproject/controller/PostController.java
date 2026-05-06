@@ -3,6 +3,7 @@ package io.backend.blogproject.controller;
 import io.backend.blogproject.constant.Visibility;
 import io.backend.blogproject.domain.dto.PostRequest;
 import io.backend.blogproject.domain.dto.PostResponse;
+import io.backend.blogproject.service.CategoryService;
 import io.backend.blogproject.service.PostService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
