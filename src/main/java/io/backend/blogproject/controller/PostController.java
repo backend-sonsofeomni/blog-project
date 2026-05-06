@@ -2,6 +2,7 @@ package io.backend.blogproject.controller;
 
 import io.backend.blogproject.constant.Visibility;
 import io.backend.blogproject.domain.dto.PostCreateRequest;
+import io.backend.blogproject.domain.dto.PostPageResponse;
 import io.backend.blogproject.domain.dto.PostUpdateRequest;
 import io.backend.blogproject.domain.entity.Post;
 import io.backend.blogproject.service.PostService;
@@ -11,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +25,14 @@ public class PostController {
 
     // 조회
     @GetMapping("/posts")
-    public String list(Model model){
-        model.addAttribute("posts", postService.getPublicPosts());
+    public String list(
+            @RequestParam(defaultValue = "1") int page,
+            Model model
+    ){
+        PostPageResponse response = postService.getPublicPosts(page);
+
+        model.addAttribute("page", response);
+        model.addAttribute("posts", response.getPosts());
 
         return "posts";
     }
