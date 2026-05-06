@@ -27,7 +27,7 @@ public class PostController {
     @GetMapping("/posts")
     public String list(Model model){
         model.addAttribute("posts", postService.getPublicPosts());
-
+        model.addAttribute("categories", categoryService.getCategories());
         return "posts";
     }
 
@@ -36,7 +36,7 @@ public class PostController {
     public String detail(@PathVariable Long postId, Model model){
 
         model.addAttribute("post", postService.getPost(postId));
-
+//        model.addAttribute("comments", commentService.getComments(postId));
         return "post_detail";
     }
 
@@ -62,6 +62,7 @@ public class PostController {
     @GetMapping("/posts/{postId}/edit")
     public String updateForm(@PathVariable Long postId, Model model) {
         model.addAttribute("post", postService.getPostForEdit(postId));
+        model.addAttribute("categories", categoryService.getCategories());
         return "post_edit";
     }
 
