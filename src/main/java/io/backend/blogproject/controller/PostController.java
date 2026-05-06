@@ -5,6 +5,7 @@ import io.backend.blogproject.domain.dto.PostCreateRequest;
 import io.backend.blogproject.domain.dto.PostPageResponse;
 import io.backend.blogproject.domain.dto.PostUpdateRequest;
 import io.backend.blogproject.domain.entity.Post;
+import io.backend.blogproject.service.CategoryService;
 import io.backend.blogproject.service.PostService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+    private final CategoryService categoryService;
 
     // 조회
     @GetMapping("/posts")
@@ -38,6 +40,7 @@ public class PostController {
 
         model.addAttribute("page", response);
         model.addAttribute("posts", response.getPosts());
+        model.addAttribute("categories", categoryService.getCategories());
         model.addAttribute("selectedCategoryId", categoryId);
         model.addAttribute("noCategory", noCategory);
 
@@ -68,13 +71,16 @@ public class PostController {
 
             response.addCookie(cookie);
         }
+        //        model.addAttribute("comments", commentService.getComments(postId));
+
 
         return "post_detail";
     }
 
     // 생성
-    @GetMapping("posts/new")
-    public String createForm(){
+    @GetMapping("/posts/new")
+    public String createForm(Model model){
+        model.addAttribute("categories", categoryService.getCategories());
         return "post_form";
     }
 
@@ -93,6 +99,7 @@ public class PostController {
     @GetMapping("/posts/{postId}/edit")
     public String updateForm(@PathVariable Long postId, Model model) {
         model.addAttribute("post", postService.getPostForEdit(postId));
+        model.addAttribute("categories", categoryService.getCategories());
         return "post_edit";
     }
 

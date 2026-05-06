@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>카테고리 관리</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 text-slate-800">
+
+<div class="max-w-5xl mx-auto p-6">
+
+    <div class="bg-white rounded-3xl shadow p-8">
+
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-black">카테고리 관리</h1>
+
+            <a href="/posts"
+               class="bg-slate-700 text-white px-5 py-3 rounded-2xl font-bold">
+                게시글 목록
+            </a>
+        </div>
+
+        <!-- Create Category -->
+        <form action="/categories"
+              method="post"
+              class="flex gap-3 mb-10">
+
+            <input name="title"
+                   class="flex-1 border border-slate-300 rounded-2xl px-5 py-4 text-lg"
+                   placeholder="새 카테고리 이름"
+                   required>
+
+            <button type="submit"
+                    class="bg-blue-600 text-white px-7 py-4 rounded-2xl font-bold">
+                추가
+            </button>
+        </form>
+
+        <!-- Category List -->
+        <section>
+            <h2 class="text-xl font-bold mb-4">전체 카테고리</h2>
+
+            <div class="space-y-4">
+
+                <div th:each="category : ${categories}"
+                     class="border border-slate-200 rounded-2xl p-5">
+
+                    <div class="flex gap-3 items-center">
+
+                        <!-- Update -->
+                        <form th:action="@{/categories/{categoryId}/update(categoryId=${category.id})}"
+                              method="post"
+                              class="flex-1 flex gap-3">
+
+                            <input name="title"
+                                   th:value="${category.title}"
+                                   class="flex-1 border border-slate-300 rounded-xl px-4 py-3">
+
+                            <button type="submit"
+                                    class="bg-green-600 text-white px-5 py-3 rounded-xl font-bold">
+                                수정
+                            </button>
+                        </form>
+
+                        <!-- Delete -->
+                        <form th:action="@{/categories/{categoryId}/delete(categoryId=${category.id})}"
+                              method="post">
+                            <button type="submit"
+                                    class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold">
+                                삭제
+                            </button>
+                        </form>
+
+                    </div>
+
+                </div>
+
+                <div th:if="${categories == null or #lists.isEmpty(categories)}"
+                     class="text-center text-slate-400 py-16">
+                    아직 카테고리가 없습니다.
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+</body>
+</html>
