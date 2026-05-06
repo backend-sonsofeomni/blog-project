@@ -1,10 +1,8 @@
 package io.backend.blogproject.controller;
 
 import io.backend.blogproject.constant.Visibility;
-import io.backend.blogproject.domain.dto.PostCreateRequest;
-import io.backend.blogproject.domain.dto.PostPageResponse;
-import io.backend.blogproject.domain.dto.PostUpdateRequest;
-import io.backend.blogproject.domain.entity.Post;
+import io.backend.blogproject.domain.dto.PostRequest;
+import io.backend.blogproject.domain.dto.PostResponse;
 import io.backend.blogproject.service.CategoryService;
 import io.backend.blogproject.service.PostService;
 import jakarta.servlet.http.Cookie;
@@ -17,9 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -39,10 +34,10 @@ public class PostController {
         PostPageResponse response = postService.getPublicPosts(page, categoryId, noCategory);
 
         model.addAttribute("page", response);
-        model.addAttribute("posts", response.getPosts());
         model.addAttribute("categories", categoryService.getCategories());
         model.addAttribute("selectedCategoryId", categoryId);
         model.addAttribute("noCategory", noCategory);
+        model.addAttribute("posts", response.posts());
 
         return "posts";
     }
@@ -85,10 +80,10 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public String createPost(PostCreateRequest request){
+    public String createPost(PostRequest.Create request){
         Long postId = postService.createPost(request);
 
-        if(request.getVisibility() == Visibility.PRIVATE){
+        if(request.visibility() == Visibility.PRIVATE){
             return "redirect:/posts";
         }
 
@@ -104,10 +99,13 @@ public class PostController {
     }
 
     @PostMapping("posts/{postId}/edit")
-    public String updateForm(@PathVariable Long postId, PostUpdateRequest request){
+    public String updateForm(
+            @PathVariable Long postId,
+            PostRequest.Update request
+    ){
         postService.updatePost(postId, request);;
 
-        if(request.getVisibility() == Visibility.PRIVATE){
+        if(request.visibility() == Visibility.PRIVATE){
             return "redirect:/posts";
         }
 

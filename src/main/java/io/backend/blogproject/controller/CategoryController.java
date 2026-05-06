@@ -1,7 +1,6 @@
 package io.backend.blogproject.controller;
 
-import io.backend.blogproject.domain.dto.CategoryCreateRequest;
-import io.backend.blogproject.domain.dto.CategoryUpdateRequest;
+import io.backend.blogproject.domain.dto.CategoryRequest;
 import io.backend.blogproject.service.CategoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +23,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public String create(CategoryCreateRequest request) {
+    public String create(CategoryRequest.Create request) {
         categoryService.createCategory(request);
         return "redirect:/categories";
     }
@@ -32,7 +31,7 @@ public class CategoryController {
     @PostMapping("/{categoryId}/update")
     public String update(
             @PathVariable Long categoryId,
-            CategoryUpdateRequest request
+            CategoryRequest.Update request
     ) {
         categoryService.updateCategory(categoryId, request);
         return "redirect:/categories";
