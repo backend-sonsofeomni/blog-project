@@ -58,7 +58,7 @@ public class PostController {
             HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "0") int page
+            @RequestParam(defaultValue = "1") int page
             ){
 
         String cookieName = "viewed_post_" + postId;
@@ -67,11 +67,13 @@ public class PostController {
                 .getComments(
                         postId,
                         size,
-                        page
+                        page-1
                 );
 
 
         model.addAttribute("comments",foundedPage.comments());
+
+        model.addAttribute("page",foundedPage);
 
         boolean alreadyViewed = hasCookie(request, cookieName);
 

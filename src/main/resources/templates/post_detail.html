@@ -108,6 +108,14 @@
 
                     </div>
 
+                    <form id="replyComment">
+                        <button type="submit"
+                                th:data-id="${comment.id}"
+                                class="text-black-600 font-bold">
+                            대댓글 작성
+                        </button>
+                    </form>
+
                     <form id="deleteComment">
                         <button type="submit"
                                 th:data-id="${comment.id}"
@@ -126,35 +134,8 @@
 
 
             <!-- Pagination -->
-            <div th:if="${page != null and page.totalPages > 0}"
+            <div th:if="${page != null and page.totalPageNum > 0}"
                  class="flex items-center justify-between border-t border-slate-200 px-4 py-5 sm:px-6 mt-8">
-
-                <!-- Mobile pagination -->
-                <div class="flex flex-1 justify-between sm:hidden">
-
-                    <a th:if="${page.hasPrevious}"
-                       th:href="@{/posts(page=${page.currentPage - 1}, categoryId=${selectedCategoryId}, noCategory=${noCategory})}"
-                       class="relative inline-flex items-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
-                        Previous
-                    </a>
-
-                    <span th:if="${!page.hasPrevious}"
-                          class="relative inline-flex items-center rounded-md border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-400">
-                        Previous
-                    </span>
-
-                    <a th:if="${page.hasNext}"
-                       th:href="@{/posts(page=${page.currentPage + 1}, categoryId=${selectedCategoryId}, noCategory=${noCategory})}"
-                       class="relative ml-3 inline-flex items-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
-                        Next
-                    </a>
-
-                    <span th:if="${!page.hasNext}"
-                          class="relative ml-3 inline-flex items-center rounded-md border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-400">
-                        Next
-                    </span>
-
-                </div>
 
                 <!-- Desktop pagination -->
                 <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
@@ -162,9 +143,9 @@
                     <div>
                         <p class="text-sm text-slate-500">
                             Page
-                            <span class="font-medium" th:text="${page.currentPage}">1</span>
+                            <span class="font-medium" th:text="${page.page}">1</span>
                             of
-                            <span class="font-medium" th:text="${page.totalPages}">1</span>
+                            <span class="font-medium" th:text="${page.totalPageNum}">1</span>
                         </p>
                     </div>
 
@@ -172,8 +153,8 @@
                         <nav aria-label="Pagination" class="isolate inline-flex -space-x-px rounded-md shadow-sm">
 
                             <!-- Previous -->
-                            <a th:if="${page.hasPrevious}"
-                               th:href="@{/posts(page=${page.currentPage - 1}, categoryId=${selectedCategoryId}, noCategory=${noCategory})}"
+                            <a th:if="${page.page > 0}"
+                               th:href="@{/posts/{postId}(postId=${post.postId}, page=${page.page - 1}, size=${size})}"
                                class="relative inline-flex items-center rounded-l-md px-2 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0">
                                 <span class="sr-only">Previous</span>
                                 <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
@@ -183,7 +164,7 @@
                                 </svg>
                             </a>
 
-                            <span th:if="${!page.hasPrevious}"
+                            <span th:if="${!(page.page > 0)}"
                                   class="relative inline-flex items-center rounded-l-md px-2 py-2 text-slate-300 ring-1 ring-inset ring-slate-200 cursor-not-allowed">
                                 <span class="sr-only">Previous</span>
                                 <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
@@ -194,11 +175,11 @@
                             </span>
 
                             <!-- Page numbers -->
-                            <a th:each="pageNumber : ${#numbers.sequence(1, page.totalPages)}"
-                               th:href="@{/posts(page=${pageNumber}, categoryId=${selectedCategoryId}, noCategory=${noCategory})}"
+                            <a th:each="pageNumber : ${#numbers.sequence(1, page.totalPageNum())}"
+                               th:href="@{/posts/{postId}(postId=${post.postId}, page=${pageNumber}, size=${size})}"
                                th:text="${pageNumber}"
-                               th:aria-current="${pageNumber == page.currentPage ? 'page' : null}"
-                               th:classappend="${pageNumber == page.currentPage}
+                               th:aria-current="${pageNumber -1 == page.page ? 'page' : null}"
+                               th:classappend="${pageNumber -1 == page.page}
                                     ? ' z-10 bg-blue-600 text-white focus-visible:outline-blue-600'
                                     : ' text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50'"
                                class="relative inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus:outline-offset-0">
@@ -206,8 +187,8 @@
                             </a>
 
                             <!-- Next -->
-                            <a th:if="${page.hasNext}"
-                               th:href="@{/posts(page=${page.currentPage + 1}, categoryId=${selectedCategoryId}, noCategory=${noCategory})}"
+                            <a th:if="${page.page > 0}"
+                               th:href="@{/posts/{postId}(postId=${post.postId}, page=${page.page + 1}, size=${size})}"
                                class="relative inline-flex items-center rounded-r-md px-2 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0">
                                 <span class="sr-only">Next</span>
                                 <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
@@ -217,7 +198,7 @@
                                 </svg>
                             </a>
 
-                            <span th:if="${!page.hasNext}"
+                            <span th:if="${!(page.page > 0)}"
                                   class="relative inline-flex items-center rounded-r-md px-2 py-2 text-slate-300 ring-1 ring-inset ring-slate-200 cursor-not-allowed">
                                 <span class="sr-only">Next</span>
                                 <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
