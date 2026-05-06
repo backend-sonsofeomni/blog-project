@@ -2,10 +2,8 @@ package io.backend.blogproject.service;
 
 import io.backend.blogproject.constant.Status;
 import io.backend.blogproject.constant.Visibility;
-import io.backend.blogproject.domain.dto.PostCreateRequest;
-import io.backend.blogproject.domain.dto.PostDetailResponse;
-import io.backend.blogproject.domain.dto.PostListResponse;
-import io.backend.blogproject.domain.dto.PostUpdateRequest;
+import io.backend.blogproject.domain.dto.PostRequest;
+import io.backend.blogproject.domain.dto.PostResponse;
 import io.backend.blogproject.domain.entity.Category;
 import io.backend.blogproject.domain.entity.Post;
 import io.backend.blogproject.repository.PostRepository;
@@ -21,13 +19,13 @@ public class PostService {
     private final PostRepository postRepository;
     //private final CategoryRepository categoryRepository;
 
-    public Long createPost(PostCreateRequest request){
-        Category category = findCategoryOrNull(request.getCategoryId());
+    public Long createPost(PostRequest.Create request){
+        Category category = findCategoryOrNull(request.categoryId());
 
         Post post = Post.builder()
-                .title(request.getTitle())
-                .content(request.getContent())
-                .visibility(request.getVisibility())
+                .title(request.title())
+                .content(request.content())
+                .visibility(request.visibility())
                 .category(category)
                 .build();
 
@@ -36,7 +34,7 @@ public class PostService {
         return savedPost.getPostId();
     }
 
-    public List<PostListResponse> getPublicPosts(){
+    public List<PostResponse.PostList> getPublicPosts(){
         List<Post> posts = postRepository.findAllByStatusAndVisibility(
                 Status.ACTIVATED,
                 Visibility.PUBLIC
@@ -44,38 +42,38 @@ public class PostService {
 
 
         return posts.stream()
-                .map(PostListResponse::from)
+                .map(PostResponse.PostList::from)
                 .toList();
     }
 
-    public PostDetailResponse getPost(Long postId){
+    public PostResponse.PostDetail getPost(Long postId){
         Post post = postRepository.findByPostIdAndStatusAndVisibility(postId, Status.ACTIVATED, Visibility.PUBLIC)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id="+postId));
         post.increaseViewCount();
         postRepository.update(post);
 
-        return PostDetailResponse.from(post);
+        return PostResponse.PostDetail.from(post);
     }
 
-    public PostDetailResponse getPostForEdit(Long postId) {
+    public PostResponse.PostDetail getPostForEdit(Long postId) {
         Post post = postRepository.findByPostIdAndStatus(postId, Status.ACTIVATED)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id=" + postId));
 
-        return PostDetailResponse.from(post);
+        return PostResponse.PostDetail.from(post);
     }
 
-    public void updatePost(Long postId, PostUpdateRequest request){
+    public void updatePost(Long postId, PostRequest.Update request){
         Post post = postRepository.findByPostIdAndStatus(postId, Status.ACTIVATED)
                 .orElseThrow(()->new IllegalArgumentException("게시글을 찾을 수 없습니다. id="+postId));
 
 
-        Category category = findCategoryOrNull(request.getCategoryId());
+        Category category = findCategoryOrNull(request.categoryId());
 
 
         post.update(
-                request.getTitle(),
-                request.getContent(),
-                request.getVisibility(),
+                request.title(),
+                request.content(),
+                request.visibility(),
                 category
         );
         postRepository.update(post);
