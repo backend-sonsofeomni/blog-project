@@ -17,26 +17,29 @@ public class CategoryRepository {
 
     private final EntityManagerFactory emf;
 
-    public Category save(Category category) {
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction tx = em.getTransaction();
+    public Optional<Category> findById(Long categoryId) {
 
-        try {
-            tx.begin();
+        try (EntityManager em = emf.createEntityManager()) {
 
-            em.persist(category);
+            String jpql = """
+                    SELECT c
+                    FROM Category c
+                    WHERE c.id = :categoryId
+                    AND c.status = :status
+                    """;
 
-            tx.commit();
+            List<Category> result = em.createQuery(jpql, Category.class)
 
-            return category;
+                    .setParameter("categoryId", categoryId)
+                    .setParameter("status", Status.ACTIVATED)
+                    .getResultList();
+
+            return result.stream().findFirst();
+
         } catch (Exception e) {
-            if (tx.isActive()) {
-                tx.rollback();
-            }
 
-            throw new RuntimeException("카테고리 저장에 실패했습니다.", e);
-        } finally {
-            em.close();
+            throw new RuntimeException("카테고리 조회에 실패!", e);
+
         }
     }
 }

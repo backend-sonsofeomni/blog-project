@@ -4,6 +4,7 @@ import io.backend.blogproject.constant.Visibility;
 import io.backend.blogproject.domain.dto.PostCreateRequest;
 import io.backend.blogproject.domain.dto.PostUpdateRequest;
 import io.backend.blogproject.domain.entity.Post;
+import io.backend.blogproject.service.CategoryService;
 import io.backend.blogproject.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+    private final CategoryService categoryService;
 
     // 조회
     @GetMapping("/posts")
