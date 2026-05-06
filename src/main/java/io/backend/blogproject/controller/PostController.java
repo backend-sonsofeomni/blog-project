@@ -65,6 +65,11 @@ public class PostController {
     @PostMapping("posts/{postId}/edit")
     public String updateForm(@PathVariable Long postId, PostUpdateRequest request){
         postService.updatePost(postId, request);;
+
+        if(request.getVisibility() == Visibility.PRIVATE){
+            return "redirect:/posts";
+        }
+
         return "redirect:/posts/"+postId;
     }
 
