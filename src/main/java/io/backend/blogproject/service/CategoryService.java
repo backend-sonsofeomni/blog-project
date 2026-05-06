@@ -1,7 +1,6 @@
 package io.backend.blogproject.service;
 
-import io.backend.blogproject.domain.dto.CategoryCreateRequest;
-import io.backend.blogproject.domain.dto.CategoryUpdateRequest;
+import io.backend.blogproject.domain.dto.CategoryRequest;
 import io.backend.blogproject.domain.entity.Category;
 import io.backend.blogproject.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
@@ -20,23 +19,24 @@ public class CategoryService {
         return categoryRepository.findAllActivated();
     }
 
-    public void createCategory(CategoryCreateRequest request) {
-        if (request.getTitle() == null || request.getTitle().isBlank()) {
-            throw new IllegalArgumentException("카테고리 이름을 작성해주세요.");
+       public void createCategory(CategoryRequest.Create request) {
+        if (request.title() == null || request.title().isBlank()) {
+            throw new IllegalArgumentException("카테고리 이름을 작성해주세용.");
         }
 
-        Category category = new Category(request.getTitle());
+        Category category = new Category(request.title());
         categoryRepository.save(category);
     }
 
-    public void updateCategory(Long categoryId, CategoryUpdateRequest request) {
+    public void updateCategory(Long categoryId, CategoryRequest.Update request) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니데."));
 
-        category.update(request.getTitle());
+        category.update(request.title());
 
         categoryRepository.update(category);
     }
+
 
     public void deleteCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)

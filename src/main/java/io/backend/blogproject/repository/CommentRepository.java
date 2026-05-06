@@ -60,10 +60,9 @@ public class CommentRepository {
             Post post,
             String content
     ){
-        try(
-                EntityManager em = emf.createEntityManager()
-        ) {
-            EntityTransaction tx = em.getTransaction();
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try{
             tx.begin();
 
             Comment comment = Comment.createComment(
@@ -74,7 +73,10 @@ public class CommentRepository {
             em.persist(comment);
             tx.commit();
         } catch (Exception e){
+            tx.rollback();
             throw new RuntimeException(ErrorCode.NO_POST.message,e);
+        } finally {
+            em.close();
         }
     }
 
