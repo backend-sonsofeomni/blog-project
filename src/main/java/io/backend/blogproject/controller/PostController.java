@@ -1,13 +1,16 @@
 package io.backend.blogproject.controller;
 
 import io.backend.blogproject.constant.Visibility;
+import io.backend.blogproject.domain.dto.Page;
 import io.backend.blogproject.domain.dto.PostRequest;
 import io.backend.blogproject.domain.dto.PostResponse;
 import io.backend.blogproject.service.CategoryService;
+import io.backend.blogproject.service.CommentService;
 import io.backend.blogproject.service.PostService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jdk.swing.interop.SwingInterOpUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,12 +19,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 @Controller
 @RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
     private final CategoryService categoryService;
+    private final CommentService commentService;
 
     // 조회
     @GetMapping("/posts")
@@ -48,9 +56,22 @@ public class PostController {
             @PathVariable Long postId,
             Model model,
             HttpServletRequest request,
-            HttpServletResponse response){
+            HttpServletResponse response,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "0") int page
+            ){
 
         String cookieName = "viewed_post_" + postId;
+
+        Page foundedPage = commentService
+                .getComments(
+                        postId,
+                        size,
+                        page
+                );
+
+
+        model.addAttribute("comments",foundedPage.comments());
 
         boolean alreadyViewed = hasCookie(request, cookieName);
 
@@ -66,8 +87,6 @@ public class PostController {
 
             response.addCookie(cookie);
         }
-        //        model.addAttribute("comments", commentService.getComments(postId));
-
 
         return "post_detail";
     }
