@@ -27,11 +27,16 @@ public class PostController {
     @GetMapping("/posts")
     public String list(
             @RequestParam(defaultValue = "1") int page,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(defaultValue = "false") boolean noCategory,
             Model model
     ){
-        PostResponse.PostPage response = postService.getPublicPosts(page);
+        PostResponse.PostPage response = postService.getPublicPosts(page, categoryId, noCategory);
 
         model.addAttribute("page", response);
+        model.addAttribute("categories", categoryService.getCategories());
+        model.addAttribute("selectedCategoryId", categoryId);
+        model.addAttribute("noCategory", noCategory);
         model.addAttribute("posts", response.posts());
 
         return "posts";
@@ -61,6 +66,8 @@ public class PostController {
 
             response.addCookie(cookie);
         }
+        //        model.addAttribute("comments", commentService.getComments(postId));
+
 
         return "post_detail";
     }
