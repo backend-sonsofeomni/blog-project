@@ -49,24 +49,25 @@
                     <div class="flex gap-3 items-center">
 
                         <!-- Update -->
-                        <form th:action="@{/categories/{categoryId}/update(categoryId=${category.id})}"
-                              method="post"
+                        <form id = "updateCategory"
                               class="flex-1 flex gap-3">
 
-                            <input name="title"
+                            <input id = "title"
+                                   name="title"
                                    th:value="${category.title}"
                                    class="flex-1 border border-slate-300 rounded-xl px-4 py-3">
 
                             <button type="submit"
+                                    th:data-id="${category.id}"
                                     class="bg-green-600 text-white px-5 py-3 rounded-xl font-bold">
                                 수정
                             </button>
                         </form>
 
                         <!-- Delete -->
-                        <form th:action="@{/categories/{categoryId}/delete(categoryId=${category.id})}"
-                              method="post">
+                        <form id = "deleteCategory">
                             <button type="submit"
+                                    th:data-id="${category.id}"
                                     class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold">
                                 삭제
                             </button>
@@ -89,4 +90,6 @@
 </div>
 
 </body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script type="module"  th:src="@{/js/category.js}"></script>
 </html>

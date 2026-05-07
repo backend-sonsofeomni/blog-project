@@ -1,6 +1,6 @@
 import {commentUpdate} from "/js/axiosApi.js";
 
-//
+// 게시물 수정
 document.addEventListener(
     "submit",
     async (e)=>{

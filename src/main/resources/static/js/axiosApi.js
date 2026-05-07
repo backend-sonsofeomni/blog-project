@@ -16,3 +16,7 @@ export const commentDelete = (path) => apiClient.delete(path);
 export const commentUpdate = (path,createRequest) => apiClient.put(path,createRequest)
 
 export const postDelete = (path) => apiClient.delete(path)
+
+export const categoryUpdate = (path,updateRequest) => apiClient.put(path,updateRequest)
+
+export const categoryDelete = (path) => apiClient.delete(path)
