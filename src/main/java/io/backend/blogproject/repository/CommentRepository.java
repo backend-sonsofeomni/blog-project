@@ -80,9 +80,6 @@ public class CommentRepository {
                         }
                     })
                     .toList();
-
-            for(CommentResponse i : lst) System.out.print(i.rootId());
-
         } catch(Exception e) {
             throw new RuntimeException(ErrorCode.UNABLE_TO_FIND_COMMENT.message,e);
         }
