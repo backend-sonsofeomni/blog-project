@@ -14,10 +14,7 @@ import jdk.swing.interop.SwingInterOpUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -119,18 +116,13 @@ public class PostController {
         return "post_edit";
     }
 
-    @PostMapping("posts/{postId}/edit")
-    public String updateForm(
+    @PutMapping("posts/{postId}")
+    @ResponseBody
+    public void updateForm(
             @PathVariable Long postId,
-            PostRequest.Update request
+            @RequestBody PostRequest.Update request
     ){
-        postService.updatePost(postId, request);;
-
-        if(request.visibility() == Visibility.PRIVATE){
-            return "redirect:/posts";
-        }
-
-        return "redirect:/posts/"+postId;
+        postService.updatePost(postId, request);
     }
 
 

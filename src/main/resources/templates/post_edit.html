@@ -14,8 +14,7 @@
 
         <h1 class="text-3xl font-black mb-8">게시글 수정</h1>
 
-        <form th:action="@{/posts/{postId}/edit(postId=${post.postId})}"
-              method="post"
+        <form id="updatePost"
               class="space-y-6">
 
             <div>
@@ -83,8 +82,9 @@
 
         </form>
     </div>
-
 </div>
-
 </body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script th:inline="javascript">window.postId = /*[[${post.postId}]]*/ 0</script>
+<script type="module"  th:src="@{/js/postEdit.js}"></script>
 </html>

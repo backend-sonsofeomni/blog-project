@@ -12,3 +12,5 @@ export const commentPostWithParams = (path,createRequest,postId)=>apiClient.post
     } })
 
 export const commentDelete = (path) => apiClient.delete(path);
+
+export const commentUpdate = (path,createRequest) => apiClient.put(path,createRequest)

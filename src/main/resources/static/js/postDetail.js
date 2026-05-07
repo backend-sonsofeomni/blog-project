@@ -1,6 +1,6 @@
 import {commentPost, commentDelete, commentPostWithParams} from "/js/axiosApi.js";
 
-// form 기본 제출 방지
+// 댓글 생성 API
 document.addEventListener(
     "submit",
     async (e) => {
@@ -28,8 +28,7 @@ document.addEventListener(
     }
 );
 
-
-
+// 댓글 삭제 API ( DELETE )
 document.addEventListener(
     "submit",
     async (e) => {
@@ -58,6 +57,7 @@ document.addEventListener(
     }
 );
 
+// 대댓글 API ( POST )
 document.addEventListener(
     "submit",
     async (e) => {
