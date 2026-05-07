@@ -88,7 +88,7 @@
                                 <span th:text="${post.viewedCnt}">0</span>
 
                                 · 작성일
-                                <span th:text="${post.createdAt}">작성일</span>
+                                <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
                             </p>
                         </div>
 
