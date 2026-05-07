@@ -1,6 +1,6 @@
-import {commentPost, commentDelete, commentPostWithParams} from "/js/axiosApi.js";
+import {commentPost, commentDelete, commentPostWithParams, postDelete} from "/js/axiosApi.js";
 
-// form 기본 제출 방지
+// 댓글 생성 API
 document.addEventListener(
     "submit",
     async (e) => {
@@ -28,8 +28,7 @@ document.addEventListener(
     }
 );
 
-
-
+// 댓글 삭제 API ( DELETE )
 document.addEventListener(
     "submit",
     async (e) => {
@@ -58,6 +57,7 @@ document.addEventListener(
     }
 );
 
+// 대댓글 API ( POST )
 document.addEventListener(
     "submit",
     async (e) => {
@@ -89,4 +89,29 @@ document.addEventListener(
     }
 );
 
+// 게시물 삭제 API ( DELETE )
+document.addEventListener(
+    "submit",
+    async (e) => {
 
+        if (e.target.id !== "deletePost") return;
+
+        e.preventDefault()
+
+        let postId = window.postId
+
+        const btn = e.target.querySelector('button')
+
+        let url = `/posts/${postId}`
+
+
+        try{
+            await postDelete(url);
+            window.location.href = `/posts`
+        } catch(error){
+            console.log(error);
+        } finally {
+            console.log("작업 끝");
+        }
+    }
+);

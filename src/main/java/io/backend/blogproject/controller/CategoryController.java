@@ -2,6 +2,7 @@ package io.backend.blogproject.controller;
 
 import io.backend.blogproject.domain.dto.CategoryRequest;
 import io.backend.blogproject.service.CategoryService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -28,18 +29,20 @@ public class CategoryController {
         return "redirect:/categories";
     }
 
-    @PostMapping("/{categoryId}/update")
-    public String update(
+    @PutMapping("/{categoryId}")
+    @ResponseBody
+    public ResponseEntity<String> update(
             @PathVariable Long categoryId,
-            CategoryRequest.Update request
+            @RequestBody CategoryRequest.Update request
     ) {
         categoryService.updateCategory(categoryId, request);
-        return "redirect:/categories";
+        return ResponseEntity.ok("정상처리 되었습니다.");
     }
 
-    @PostMapping("/{categoryId}/delete")
-    public String delete(@PathVariable Long categoryId) {
+    @DeleteMapping("/{categoryId}")
+    @ResponseBody
+    public ResponseEntity<String> delete(@PathVariable Long categoryId) {
         categoryService.deleteCategory(categoryId);
-        return "redirect:/categories";
+        return ResponseEntity.ok("정상처리 되었습니다.");
     }
 }
