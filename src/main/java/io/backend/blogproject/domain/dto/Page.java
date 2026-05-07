@@ -9,6 +9,6 @@ public record Page(
         int page,
         Long totalSize,
         int totalPageNum,
-        List<Comment> comments
-) {
-}
+        List<CommentResponse>  comments
+) {}
+

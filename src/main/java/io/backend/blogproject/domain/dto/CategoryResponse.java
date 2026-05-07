@@ -8,8 +8,6 @@ import java.time.LocalDateTime;
 @Getter
 public class CategoryResponse {
 
-
-
     private final Long id;
     private final String title;
     private final LocalDateTime createdAt;

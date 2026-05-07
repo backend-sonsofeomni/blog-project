@@ -28,6 +28,21 @@ public class CommentController {
         return "redirect:/posts/%d".formatted(postId);
     }
 
+    @PostMapping("/comments/{commentId}/reply")
+    public String replyComment(
+            @PathVariable Long commentId,
+            @RequestParam Long postId,
+            @RequestBody CommentRequest.Create request
+    ){
+        commentService.replyComment(
+                postId,
+                commentId,
+                request
+        );
+
+        return "redirect:/posts/%d".formatted(postId);
+    }
+
     @DeleteMapping("/comments/{commentId}")
     @ResponseBody
     public void deleteComment(

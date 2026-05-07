@@ -11,10 +11,7 @@ import io.backend.blogproject.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +19,14 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
 
+
+
     public Page getComments(
             Long postId,
             int size,
             int page
     ){
+
         return commentRepository.findCommentsByPostId(
                 postId,
                 size,

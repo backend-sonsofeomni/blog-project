@@ -2,13 +2,9 @@
 
 document.addEventListener("click", (e) => {
 
-    console.log(".")
-
     const btn = e.target.closest(".activeReply");
 
     if (!btn) return;
-
-    console.log("?");
 
     e.preventDefault();
 

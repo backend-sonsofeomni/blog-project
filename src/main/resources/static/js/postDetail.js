@@ -1,4 +1,4 @@
-import {commentPost, commentDelete} from "/js/axiosApi.js";
+import {commentPost, commentDelete, commentPostWithParams} from "/js/axiosApi.js";
 
 // form 기본 제출 방지
 document.addEventListener(
@@ -15,7 +15,7 @@ document.addEventListener(
             content : document.getElementById('content').value
         };
 
-        let url = '/comments/' + postId + '/create'
+        let url = `/comments/${postId}/create`;
 
         try{
             const result = await commentPost(url,requestBody);
@@ -44,9 +44,8 @@ document.addEventListener(
 
         const commentId = btn.dataset.id;
 
-        let url = '/comments/' + commentId
+        let url = `/comments/${commentId}`
 
-        console.log(url)
 
         try{
             await commentDelete(url);
@@ -58,4 +57,36 @@ document.addEventListener(
         }
     }
 );
+
+document.addEventListener(
+    "submit",
+    async (e) => {
+
+        if (e.target.id !== "replyComment") return;
+
+        e.preventDefault()
+
+        let postId = window.postId
+
+        const requestBody = {
+            content :  e.target.replyContent.value
+        };
+
+        const btn = e.target.querySelector('button')
+
+        const commentId = btn.dataset.id;
+
+        let url = `/comments/${commentId}/reply`
+
+        try{
+            await commentPostWithParams(url,requestBody,postId);
+            window.location.href = `/posts/${postId}`
+        } catch(error){
+            console.log(error);
+        } finally {
+            console.log("작업 끝");
+        }
+    }
+);
+
 

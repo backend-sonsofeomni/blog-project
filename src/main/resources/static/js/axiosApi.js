@@ -7,4 +7,8 @@ const apiClient = axios.create({
 });
 export const commentPost = (path,createRequest)=>apiClient.post(path,createRequest);
 
+export const commentPostWithParams = (path,createRequest,postId)=>apiClient.post(path,createRequest,{ params : {
+    postId : postId
+    } })
+
 export const commentDelete = (path) => apiClient.delete(path);

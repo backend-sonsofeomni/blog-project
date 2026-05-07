@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <title th:text="${post.title}">게시글 상세</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .makeSpace{
+            margin-left:50px
+        }
+    </style>
 </head>
 
 <body class="bg-slate-100 text-slate-800">
@@ -88,52 +93,86 @@
             </button>
         </form>
 
+
+        <span th:text="| 총 댓글 수 : ${page.totalSize}|" style="margin-left : 10px; margin-bottom : 10px; display: block;" class="text-black-600 font-bold"></span>
+
         <!-- Comment List -->
         <div class="space-y-4">
             <div class="comment-item" th:each="comment : ${comments}">
 
-                <div class="border border-slate-200 rounded-2xl p-5 flex justify-between items-start gap-4">
+                <div th:if="${(comment.status.name() == 'REMOVED')}">
+                    <div
+                            class="border border-slate-200 rounded-2xl p-5 flex justify-between items-start gap-4"
+                            th:classappend="${comment.parentId == null}? '' : 'makeSpace'"
+                    >
+                        <div class="flex-1">
+                            <p class="text-lg leading-7">
+                                삭제된 댓글입니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="flex-1">
-                        <p th:text="${comment.content}"
-                           class="text-lg leading-7">
-                            댓글 내용
-                        </p>
 
-                        <p class="text-sm text-slate-400 mt-2">
-                            댓글 ID:
-                            <span id="contentId" th:text="${comment.id}">1</span>
-                        </p>
+                <div th:if="${(comment.status.name() == 'ACTIVATED')}">
+                    <div
+                            class="border border-slate-200 rounded-2xl p-5 flex justify-between items-start gap-4"
+                            th:classappend="${comment.parentId == null}? '' : 'makeSpace'"
+                    >
+                        <div class="flex-1">
+                            <p th:text="${comment.content}"
+                               class="text-lg leading-7">
+                                댓글 내용
+                            </p>
+                            <p class="text-sm text-slate-400 mt-2">
+                                댓글 ID:
+                                <span id="contentId" th:text="${comment.commentId}">1</span>
+                            </p>
+                            <p class="text-sm text-slate-400 mt-2">
+                                작성시간:
+                                <span id="createdAt" th:text="${comment.createdAt}">1</span>
+                            </p>
+                        </div>
 
+                        <div th:if="${(comment.childId == null)}">
+                            <button type="button"
+                                    th:data-id="${comment.commentId}"
+                                    class="activeReply text-black-600 font-bold">
+                                대댓글 작성
+                            </button>
+                        </div>
+
+                        <form id="deleteComment">
+                            <button type="submit"
+                                    th:data-id="${comment.commentId}"
+                                    class="text-red-600 font-bold">
+                                삭제
+                            </button>
+                        </form>
                     </div>
 
-                    <button type="button"
-                            th:data-id="${comment.id}"
-                            class="activeReply text-black-600 font-bold">
-                        대댓글 작성
-                    </button>
-
-                    <form id="deleteComment">
-                        <button type="submit"
-                                th:data-id="${comment.id}"
-                                class="text-red-600 font-bold">
-                            삭제
-                        </button>
-                    </form>
 
                 </div>
-                <form class="createReply hidden flex
-                 gap-3 mb-8"
-                    style = "margin-top : 10px">
+
+
+                <form
+                    id = "replyComment"
+                    th:action="@{/comments/{commentId}/reply(commentId=${comment.commentId}, postId=${post.postId})}"
+                    class="createReply hidden flex gap-3 mb-8"
+                    style = "margin-top : 10px"
+                    method = "post"
+                >
 
                     <input type="text"
                            id = "replyContent"
                            name="replyContent"
                            class="flex-1 border border-slate-300 rounded-2xl px-5 py-4"
+                           th:classappend="${comment.parentId == null}?  '' : 'makeSpace'"
                            placeholder="대댓글을 입력하세요"
                            required>
 
                     <button type="submit"
+                            th:data-id="${comment.commentId}"
                             class="bg-blue-600 text-white px-6 py-4 rounded-2xl font-bold">
                         작성
                     </button>
