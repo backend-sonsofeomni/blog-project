@@ -32,7 +32,7 @@ public class Comment {
     private LocalDateTime createdAt;
 
     @OneToOne(mappedBy = "parentId")
-    private Comment childId;
+    private Comment childId; //
 
     @OneToOne
     @JoinColumn(name = "parent_id")

@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <title th:text="${post.title}">게시글 상세</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .makeSpace{
+            margin-left:50px
+        }
+    </style>
 </head>
 
 <body class="bg-slate-100 text-slate-800">
@@ -72,11 +77,11 @@
         <h2 class="text-2xl font-black mb-6">댓글</h2>
 
         <!-- Create Comment -->
-        <form th:action="@{/posts/{postId}/comments(postId=${post.postId})}"
-              method="post"
+        <form id = "createComment"
               class="flex gap-3 mb-8">
 
             <input type="text"
+                   id = "content"
                    name="content"
                    class="flex-1 border border-slate-300 rounded-2xl px-5 py-4"
                    placeholder="댓글을 입력하세요"
@@ -88,47 +93,187 @@
             </button>
         </form>
 
+
+        <span th:text="| 총 댓글 수 : ${page.totalSize}|" style="margin-left : 10px; margin-bottom : 10px; display: block;" class="text-black-600 font-bold"></span>
+
         <!-- Comment List -->
         <div class="space-y-4">
+            <div class="comment-item" th:each="comment : ${comments}">
 
-            <div th:each="comment : ${comments}"
-                 class="border border-slate-200 rounded-2xl p-5">
+                <div th:if="${(comment.status.name() == 'REMOVED')}">
+                    <div
+                            class="border border-slate-200 rounded-2xl p-5 flex justify-between items-start gap-4"
+                            th:classappend="${comment.parentId == null}? '' : 'makeSpace'"
+                    >
+                        <div class="flex-1">
+                            <p class="text-lg leading-7">
+                                삭제된 댓글입니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-                <div class="flex justify-between items-start gap-4">
 
-                    <div class="flex-1">
-                        <p th:text="${comment.content}"
-                           class="text-lg leading-7">
-                            댓글 내용
-                        </p>
+                <div th:if="${(comment.status.name() == 'ACTIVATED')}">
+                    <div
+                            class="border border-slate-200 rounded-2xl p-5 flex justify-between items-start gap-4"
+                            th:classappend="${comment.parentId == null}? '' : 'makeSpace'"
+                    >
+                        <div class="flex-1">
+                            <p th:text="${comment.content}"
+                               class="text-lg leading-7">
+                                댓글 내용
+                            </p>
+                            <p class="text-sm text-slate-400 mt-2">
+                                댓글 ID:
+                                <span id="contentId" th:text="${comment.commentId}">1</span>
+                            </p>
+                            <p class="text-sm text-slate-400 mt-2">
+                                작성시간:
+                                <span id="createdAt" th:text="${comment.createdAt}">1</span>
+                            </p>
+                        </div>
 
-                        <p class="text-sm text-slate-400 mt-2">
-                            댓글 ID:
-                            <span th:text="${comment.id}">1</span>
-                        </p>
+                        <div th:if="${(comment.childId == null)}">
+                            <button type="button"
+                                    th:data-id="${comment.commentId}"
+                                    class="activeReply text-black-600 font-bold">
+                                대댓글 작성
+                            </button>
+                        </div>
+
+                        <form id="deleteComment">
+                            <button type="submit"
+                                    th:data-id="${comment.commentId}"
+                                    class="text-red-600 font-bold">
+                                삭제
+                            </button>
+                        </form>
                     </div>
 
-                    <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${post.postId}, commentId=${comment.id})}"
-                          method="post">
-                        <button type="submit"
-                                class="text-red-600 font-bold">
-                            삭제
-                        </button>
-                    </form>
 
                 </div>
+
+
+                <form
+                    id = "replyComment"
+                    th:action="@{/comments/{commentId}/reply(commentId=${comment.commentId}, postId=${post.postId})}"
+                    class="createReply hidden flex gap-3 mb-8"
+                    style = "margin-top : 10px"
+                    method = "post"
+                >
+
+                    <input type="text"
+                           id = "replyContent"
+                           name="replyContent"
+                           class="flex-1 border border-slate-300 rounded-2xl px-5 py-4"
+                           th:classappend="${comment.parentId == null}?  '' : 'makeSpace'"
+                           placeholder="대댓글을 입력하세요"
+                           required>
+
+                    <button type="submit"
+                            th:data-id="${comment.commentId}"
+                            class="bg-blue-600 text-white px-6 py-4 rounded-2xl font-bold">
+                        작성
+                    </button>
+                </form>
             </div>
+
+
 
             <div th:if="${comments == null or #lists.isEmpty(comments)}"
                  class="text-center text-slate-400 py-10">
                 아직 댓글이 없습니다.
             </div>
 
+
+            <!-- Pagination -->
+            <div th:if="${page != null and page.totalPageNum > 0}"
+                 class="flex items-center justify-between border-t border-slate-200 px-4 py-5 sm:px-6 mt-8">
+
+                <!-- Desktop pagination -->
+                <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+
+                    <div>
+                        <p class="text-sm text-slate-500">
+                            Page
+                            <span class="font-medium" th:text="${page.page + 1}">1</span>
+                            of
+                            <span class="font-medium" th:text="${page.totalPageNum}">1</span>
+                        </p>
+                    </div>
+
+                    <div>
+                        <nav aria-label="Pagination" class="isolate inline-flex -space-x-px rounded-md shadow-sm">
+
+                            <!-- Previous -->
+                            <a th:if="${page.page > 0}"
+                               th:href="@{/posts/{postId}(postId=${post.postId}, page=${page.page - 1}, size=${size})}"
+                               class="relative inline-flex items-center rounded-l-md px-2 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0">
+                                <span class="sr-only">Previous</span>
+                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
+                                    <path d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
+                                          clip-rule="evenodd"
+                                          fill-rule="evenodd"/>
+                                </svg>
+                            </a>
+
+                            <span th:if="${!(page.page > 0)}"
+                                  class="relative inline-flex items-center rounded-l-md px-2 py-2 text-slate-300 ring-1 ring-inset ring-slate-200 cursor-not-allowed">
+                                <span class="sr-only">Previous</span>
+                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
+                                    <path d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
+                                          clip-rule="evenodd"
+                                          fill-rule="evenodd"/>
+                                </svg>
+                            </span>
+
+                            <!-- Page numbers -->
+                            <a th:each="pageNumber : ${#numbers.sequence(1, page.totalPageNum())}"
+                               th:href="@{/posts/{postId}(postId=${post.postId}, page=${pageNumber}, size=${size})}"
+                               th:text="${pageNumber}"
+                               th:aria-current="${pageNumber -1 == page.page ? 'page' : null}"
+                               th:classappend="${pageNumber -1 == page.page}
+                                    ? ' z-10 bg-blue-600 text-white focus-visible:outline-blue-600'
+                                    : ' text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50'"
+                               class="relative inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus:outline-offset-0">
+                                1
+                            </a>
+
+                            <!-- Next -->
+                            <a th:if="${page.page > 0}"
+                               th:href="@{/posts/{postId}(postId=${post.postId}, page=${page.page + 1}, size=${size})}"
+                               class="relative inline-flex items-center rounded-r-md px-2 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0">
+                                <span class="sr-only">Next</span>
+                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
+                                    <path d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                                          clip-rule="evenodd"
+                                          fill-rule="evenodd"/>
+                                </svg>
+                            </a>
+
+                            <span th:if="${!(page.page > 0)}"
+                                  class="relative inline-flex items-center rounded-r-md px-2 py-2 text-slate-300 ring-1 ring-inset ring-slate-200 cursor-not-allowed">
+                                <span class="sr-only">Next</span>
+                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
+                                    <path d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                                          clip-rule="evenodd"
+                                          fill-rule="evenodd"/>
+                                </svg>
+                            </span>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
 
 </div>
-
 </body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script th:inline="javascript">window.postId = /*[[${post.postId}]]*/ 0</script>
+<script type="module"  th:src="@{/js/postDetail.js}"></script>
+<script type="module"  th:src="@{/js/postDetailAction.js}"></script>
 </html>
