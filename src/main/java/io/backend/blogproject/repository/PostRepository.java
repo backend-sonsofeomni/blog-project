@@ -71,7 +71,7 @@ public class PostRepository {
                     LEFT JOIN FETCH p.category
                     WHERE p.status = :status
                     AND p.visibility = :visibility
-                    ORDER BY p.createdAt DESC
+                    ORDER BY p.createdAt DESC, p.postId DESC
                     """;
 
             return em.createQuery(jpql, Post.class)
@@ -187,7 +187,7 @@ public class PostRepository {
                     WHERE c.id = :categoryId
                     AND p.status = :status
                     AND p.visibility = :visibility
-                    ORDER BY p.createdAt DESC
+                    ORDER BY p.createdAt DESC, p.postId DESC
                     """;
 
             return em.createQuery(jpql, Post.class)
@@ -239,7 +239,7 @@ public class PostRepository {
                 WHERE p.category IS NULL
                 AND p.status = :status
                 AND p.visibility = :visibility
-                ORDER BY p.createdAt DESC
+                ORDER BY p.createdAt DESC, p.postId DESC
                 """;
 
             return em.createQuery(jpql, Post.class)
