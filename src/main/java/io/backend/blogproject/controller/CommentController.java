@@ -4,6 +4,7 @@ import io.backend.blogproject.domain.dto.CommentRequest;
 import io.backend.blogproject.domain.entity.Comment;
 import io.backend.blogproject.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -45,10 +46,11 @@ public class CommentController {
 
     @DeleteMapping("/comments/{commentId}")
     @ResponseBody
-    public void deleteComment(
+    public ResponseEntity<String> deleteComment(
             @PathVariable Long commentId
     ){
         commentService.deleteComment(commentId);
+        return ResponseEntity.ok("요청이 정상 처리되었습니다.");
     }
 
 }

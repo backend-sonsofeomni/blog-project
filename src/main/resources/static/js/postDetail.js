@@ -1,4 +1,4 @@
-import {commentPost, commentDelete, commentPostWithParams} from "/js/axiosApi.js";
+import {commentPost, commentDelete, commentPostWithParams, postDelete} from "/js/axiosApi.js";
 
 // 댓글 생성 API
 document.addEventListener(
@@ -89,4 +89,29 @@ document.addEventListener(
     }
 );
 
+// 게시물 삭제 API ( DELETE )
+document.addEventListener(
+    "submit",
+    async (e) => {
 
+        if (e.target.id !== "deletePost") return;
+
+        e.preventDefault()
+
+        let postId = window.postId
+
+        const btn = e.target.querySelector('button')
+
+        let url = `/posts/${postId}`
+
+
+        try{
+            await postDelete(url);
+            window.location.href = `/posts`
+        } catch(error){
+            console.log(error);
+        } finally {
+            console.log("작업 끝");
+        }
+    }
+);

@@ -56,7 +56,7 @@
                 수정
             </a>
 
-            <form th:action="@{/posts/{postId}/delete(postId=${post.postId})}" method="post">
+            <form id="deletePost">
                 <button type="submit"
                         class="bg-red-600 text-white px-5 py-3 rounded-2xl font-bold">
                     삭제

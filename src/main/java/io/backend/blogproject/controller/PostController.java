@@ -12,10 +12,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jdk.swing.interop.SwingInterOpUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -116,21 +118,22 @@ public class PostController {
         return "post_edit";
     }
 
-    @PutMapping("posts/{postId}")
+    @PutMapping("/posts/{postId}")
     @ResponseBody
-    public void updateForm(
+    public ResponseEntity<String> updateForm(
             @PathVariable Long postId,
             @RequestBody PostRequest.Update request
     ){
         postService.updatePost(postId, request);
+        return ResponseEntity.ok("정상적으로 처리되었습니다.");
     }
 
 
     // 삭제
-    @PostMapping("/posts/{postId}/delete")
-    public String deletePost(@PathVariable Long postId) {
+    @DeleteMapping("/posts/{postId}")
+    public ResponseEntity<String> deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
-        return "redirect:/posts";
+        return ResponseEntity.ok("정상적으로 처리되었습니다.");
     }
 
 
