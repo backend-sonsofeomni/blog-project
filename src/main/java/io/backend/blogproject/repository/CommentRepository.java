@@ -53,8 +53,6 @@ public class CommentRepository {
 
             List<Comment> foundedList = em.createQuery(JPQL_GET_COMMENTS, Comment.class)
                     .setParameter("postId", postId)
-                    .setFirstResult(size*page)
-                    .setMaxResults(size)
                     .getResultList();
 
             totalNum = em.createQuery(JPQL_GET_COUNTS, Long.class)
@@ -73,12 +71,14 @@ public class CommentRepository {
                             )
                     )
                     .sorted((c1,c2)->{
-                        if( c1.rootId() == c2.rootId() ){
+                        if( c1.rootId().equals(c2.rootId()) ){
                             return (int)(c1.commentId() - c2.commentId());
                         }else{
                             return (int)(c1.rootId() - c2.rootId());
                         }
                     })
+                    .skip(size*page)
+                    .limit(size)
                     .toList();
         } catch(Exception e) {
             throw new RuntimeException(ErrorCode.UNABLE_TO_FIND_COMMENT.message,e);
