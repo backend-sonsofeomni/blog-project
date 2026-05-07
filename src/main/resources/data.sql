@@ -40,10 +40,10 @@ INSERT INTO post (
 
 -- category 4 (양식)
 ('파스타 만들기', '토마토 파스타 레시피', NOW(), NOW(), 0, 'PUBLIC', 'ACTIVATED', 4),
-('스테이크 굽기', '완벽한 스테이크 굽는 법', NOW(), NOW(), 0, 'PUBLIC', 'ACTIVATED', 4);
+('스테이크 굽기', '완벽한 스테이크 굽는 법', NOW(), NOW(), 0, 'PUBLIC', 'ACTIVATED', 4),
 
 -- category 5 (디저트)
-('요거트 맛있게 먹는법', '딸기잼을 넣어 먹는다.', '레시피', NOW(), NOW(), 0, 'PUBLIC', 'ACTIVATED', 5),
+('요거트 맛있게 먹는법', '딸기잼을 넣어 먹는다.', NOW(), NOW(), 0, 'PUBLIC', 'ACTIVATED', 5),
 ('식빵 먹는방법', '딸기잼, 땅콩잼 바르고 계란후라이 하나 구워서 올려드세요.', NOW(), NOW(), 0, 'PUBLIC', 'ACTIVATED', 5);
 
 INSERT INTO comment (content, status, created_at, parent_id, post_id) VALUES

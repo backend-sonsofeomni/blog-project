@@ -68,6 +68,7 @@ public class PostRepository {
             String jpql = """
                     SELECT p
                     FROM Post p
+                    LEFT JOIN FETCH p.category
                     WHERE p.status = :status
                     AND p.visibility = :visibility
                     ORDER BY p.createdAt DESC
@@ -180,13 +181,14 @@ public class PostRepository {
     ) {
         try (EntityManager em = emf.createEntityManager()) {
             String jpql = """
-                SELECT p
-                FROM Post p
-                WHERE p.category.id = :categoryId
-                AND p.status = :status
-                AND p.visibility = :visibility
-                ORDER BY p.createdAt DESC
-                """;
+                    SELECT p
+                    FROM Post p
+                    JOIN FETCH p.category c
+                    WHERE c.id = :categoryId
+                    AND p.status = :status
+                    AND p.visibility = :visibility
+                    ORDER BY p.createdAt DESC
+                    """;
 
             return em.createQuery(jpql, Post.class)
                     .setParameter("categoryId", categoryId)
